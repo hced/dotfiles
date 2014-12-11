@@ -1,3 +1,6 @@
 # Add custom paths to the `$PATH` here
 # Source this file in e.g. `~/.bash_profile`
 export PATH="$HOME/Code/bin:$PATH";
+
+# GNU core utilities
+export PATH="`$(brew --prefix coreutils)/libexec/gnubin`:$PATH";
