@@ -8,103 +8,110 @@ sudo -v
 # Keep-alive: update existing `sudo` time stamp until `.osx` has finished.
 while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 
+function brewInstallation() {
+    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+}
+
+function brewOperations() {
+    # Make sure we’re using the latest Homebrew.
+    brew update
+
+    # Upgrade any already-installed formulae.
+    brew upgrade
+
+    # Install GNU core utilities (those that come with OS X are outdated).
+    # Don’t forget to add `$(brew --prefix coreutils)/libexec/gnubin` to `$PATH`.
+    brew install coreutils
+    sudo ln -s /usr/local/bin/gsha256sum /usr/local/bin/sha256sum
+
+    # Install some other useful utilities like `sponge`.
+    brew install moreutils
+    # Install GNU `find`, `locate`, `updatedb`, and `xargs`, `g`-prefixed.
+    brew install findutils
+    # Install GNU `sed`, overwriting the built-in `sed`.
+    brew install gnu-sed --with-default-names
+    # Install Bash 4.
+    # Note: don’t forget to add `/usr/local/bin/bash` to `/etc/shells` before
+    # running `chsh`.
+    brew install bash
+    brew install bash-completion
+
+    # Install `wget` with IRI support.
+    brew install wget --with-iri
+
+    # Install RingoJS and Narwhal.
+    # Note that the order in which these are installed is important;
+    # see http://git.io/brew-narwhal-ringo.
+    brew install ringojs
+    brew install narwhal
+
+    # Install more recent versions of some OS X tools.
+    brew install vim --override-system-vi
+    brew install homebrew/dupes/grep
+    brew install homebrew/dupes/screen
+    brew install homebrew/php/php55 --with-gmp
+
+    # Install some CTF tools; see https://github.com/ctfs/write-ups.
+    brew install bfg
+    brew install binutils
+    brew install binwalk
+    brew install cifer
+    brew install dex2jar
+    brew install dns2tcp
+    brew install fcrackzip
+    brew install foremost
+    brew install hashpump
+    brew install hydra
+    brew install john
+    brew install knock
+    brew install nmap
+    brew install pngcheck
+    brew install socat
+    brew install sqlmap
+    brew install tcpflow
+    brew install tcpreplay
+    brew install tcptrace
+    brew install ucspi-tcp # `tcpserver` etc.
+    brew install xpdf
+    brew install xz
+
+    # Install other useful binaries.
+    brew install ack
+    #brew install exiv2
+    brew install git
+    brew install imagemagick --with-webp
+    brew install lua
+    brew install lynx
+    brew install p7zip
+    brew install pigz
+    brew install pv
+    brew install rename
+    brew install rhino
+    brew install tree
+    brew install webkit2png
+    brew install zopfli
+
+    # Install Node.js. Note: this installs `npm` too, using the recommended
+    # installation method.
+    brew install node
+
+    # Remove outdated versions from the cellar.
+    brew cleanup
+}
+
 # Make sure Homebrew exist before continuing with the rest of this script
-echo "Checking for existance of \`brew\` (Homebrew) package manager …"
+echo "Checking for existance of Homebrew package manager …"
 if hash brew 2>/dev/null; then
-    echo "… \`brew\` exists in your \$PATH – installation unnecessary, let's continue with the rest."
+    echo "… Homebrew is already installed, let's continue.";
+    brewOperations;
 else
     # "Yes/No" confirmation to install
     while true; do
-        read -p "\`brew\` did not exist in your \$PATH – install it now? (Y/N) " yn
+        read -p "The \`brew\` command does not exist, suggesting that you haven't installed Homebrew yet (or at least not set it up properly in your $PATH). Do you wish to install Homebrew (per official method) now? (Y/N) " yn
         case $yn in
-            [Yy]* ) ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"; break;;
-            [Nn]* ) echo "Since you chose not to install \`brew\`, there's no reason to perform any further \`brew\` operations in this script – exiting script, goodbye."; exit;;
+            [Yy]* ) brewInstallation; break;;
+            [Nn]* ) echo "Since you don't have Homebrew and chose not to install it, there's no reason to continue with any further \`brew\` operations."; break;;
             * ) echo "Please answer (Y)es or (N)o.";;
         esac
     done
 fi
-
-# Make sure we’re using the latest Homebrew.
-brew update
-
-# Upgrade any already-installed formulae.
-brew upgrade
-
-# Install GNU core utilities (those that come with OS X are outdated).
-# Don’t forget to add `$(brew --prefix coreutils)/libexec/gnubin` to `$PATH`.
-brew install coreutils
-sudo ln -s /usr/local/bin/gsha256sum /usr/local/bin/sha256sum
-
-# Install some other useful utilities like `sponge`.
-brew install moreutils
-# Install GNU `find`, `locate`, `updatedb`, and `xargs`, `g`-prefixed.
-brew install findutils
-# Install GNU `sed`, overwriting the built-in `sed`.
-brew install gnu-sed --with-default-names
-# Install Bash 4.
-# Note: don’t forget to add `/usr/local/bin/bash` to `/etc/shells` before
-# running `chsh`.
-brew install bash
-brew install bash-completion
-
-# Install `wget` with IRI support.
-brew install wget --with-iri
-
-# Install RingoJS and Narwhal.
-# Note that the order in which these are installed is important;
-# see http://git.io/brew-narwhal-ringo.
-brew install ringojs
-brew install narwhal
-
-# Install more recent versions of some OS X tools.
-brew install vim --override-system-vi
-brew install homebrew/dupes/grep
-brew install homebrew/dupes/screen
-brew install homebrew/php/php55 --with-gmp
-
-# Install some CTF tools; see https://github.com/ctfs/write-ups.
-brew install bfg
-brew install binutils
-brew install binwalk
-brew install cifer
-brew install dex2jar
-brew install dns2tcp
-brew install fcrackzip
-brew install foremost
-brew install hashpump
-brew install hydra
-brew install john
-brew install knock
-brew install nmap
-brew install pngcheck
-brew install socat
-brew install sqlmap
-brew install tcpflow
-brew install tcpreplay
-brew install tcptrace
-brew install ucspi-tcp # `tcpserver` etc.
-brew install xpdf
-brew install xz
-
-# Install other useful binaries.
-brew install ack
-#brew install exiv2
-brew install git
-brew install imagemagick --with-webp
-brew install lua
-brew install lynx
-brew install p7zip
-brew install pigz
-brew install pv
-brew install rename
-brew install rhino
-brew install tree
-brew install webkit2png
-brew install zopfli
-
-# Install Node.js. Note: this installs `npm` too, using the recommended
-# installation method.
-brew install node
-
-# Remove outdated versions from the cellar.
-brew cleanup
