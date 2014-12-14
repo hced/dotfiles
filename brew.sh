@@ -8,6 +8,22 @@ sudo -v
 # Keep-alive: update existing `sudo` time stamp until `.osx` has finished.
 while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 
+# Make sure Homebrew exist before continuing with the rest of this script
+echo "Checking for existance of \`brew\` (Homebrew) package manager …"
+if hash brew 2>/dev/null; then
+    echo "… \`brew\` exists in your \$PATH – installation unnecessary, let's continue with the rest."
+else
+    # "Yes/No" confirmation to install
+    while true; do
+        read -p "\`brew\` did not exist in your \$PATH – install it now? (Y/N) " yn
+        case $yn in
+            [Yy]* ) ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"; break;;
+            [Nn]* ) echo "Since you chose not to install \`brew\`, there's no reason to perform any further \`brew\` operations in this script – exiting script, goodbye."; exit;;
+            * ) echo "Please answer (Y)es or (N)o.";;
+        esac
+    done
+fi
+
 # Make sure we’re using the latest Homebrew.
 brew update
 
